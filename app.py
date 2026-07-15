@@ -23,7 +23,7 @@ rootDir = Path(__file__).resolve().parent
 dbPath = rootDir / "cell-count.db"
 
 # Creating databas eif does not exist already
-if not db_path.exists():
+if not dbPath.exists():
     buildDatabase()
 
 # Configuring browser tab title and using full screen width
