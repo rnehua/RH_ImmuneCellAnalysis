@@ -5,6 +5,8 @@
 # for interactive data visualizations
 import streamlit as st
 import plotly.express as px
+from pathlib import Path
+from load_data import main as buildDatabase
 
 # Importing database connection and analysis functions from analysis.py
 from analysis import (
@@ -15,6 +17,14 @@ from analysis import (
     baselineSamples,
     summarizeBaselineSamples
 )
+
+# Locating the database file in the repository root
+rootDir = Path(__file__).resolve().parent
+dbPath = rootDir / "cell-count.db"
+
+# Creating databas eif does not exist already
+if not db_path.exists():
+    buildDatabase()
 
 # Configuring browser tab title and using full screen width
 st.set_page_config(
@@ -33,13 +43,13 @@ st.write(
 with connectDB() as conn:
     frequencySummary = freqSummary(conn)
     responseAnalysis = treatmentAnalysis(conn)
-    baselineSamples = baselineSamples(conn)
+    baselineSamplesData = baselineSamples(conn)
 
 # Runnning Mann-Whitney U tests and multiple testing correction 
 statisticalResults = statisticalTests(responseAnalysis)
 
 # Assigning three DataFrames returned into their own variable
-(samplesByProject, subjectsByResponse, subjectsBySex) = summarizeBaselineSamples(baselineSamples)
+(samplesByProject, subjectsByResponse, subjectsBySex) = summarizeBaselineSamples(baselineSamplesData)
 
 # Different tabs for the three parts of the analysis 
 tab1, tab2, tab3 = st.tabs([
@@ -149,7 +159,7 @@ with tab3:
 
     # Displaying baseline melanoma PBMC samples from patients that got miraclib treatment
     st.dataframe(
-        baselineSamples,
+        baselineSamplesData,
         width="stretch"
     )
 
